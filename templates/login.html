@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anmelden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:#FCFBF8;color:#17211E;font:400 15px/1.55 Inter,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.box{width:340px;padding:32px 28px;background:#fff;border:1px solid #E3E0D8;border-radius:12px;margin:20px}
+h1{font:600 22px/1.25 Fraunces,Georgia,serif;letter-spacing:-.02em;margin:0 0 5px}
+p{color:#6B746F;font-size:14px;margin:0 0 22px}
+input{font:inherit;font-size:14px;width:100%;padding:10px 12px;border:1px solid #E3E0D8;
+  background:#FCFBF8;border-radius:7px;margin-bottom:12px}
+input:focus{background:#fff;border-color:#2C5F4F;outline:2px solid #2C5F4F;outline-offset:1px}
+button{font:inherit;font-size:14px;font-weight:500;width:100%;padding:10px;
+  border:1px solid #17211E;background:#17211E;color:#fff;border-radius:7px;cursor:pointer}
+button:hover{opacity:.86}
+.fehler{background:#F8EBE7;color:#8E3B2A;padding:10px 13px;font-size:13.5px;
+  margin-bottom:16px;border-radius:7px;border:1px solid #EBD3CC}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>TheraTalent</h1>
+  <p>Lead-Reaktivierung über WhatsApp</p>
+  {% if fehler %}<div class="fehler">Passwort stimmt nicht.</div>{% endif %}
+  <form method="post" action="/login">
+    <input type="password" name="passwort" placeholder="Passwort" autofocus required>
+    <button type="submit">Anmelden</button>
+  </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% set seite = 'chats' %}
+{% extends "base.html" %}
+{% block inhalt %}
+<a href="/chats" class="zurueck">Zurück zu allen Gesprächen</a>
+<h1>{{ lead.vorname }} {{ lead.nachname }}</h1>
+<p class="unterzeile">+{{ lead.telefon }}{% if lead.unternehmen %} · {{ lead.unternehmen }}{% endif %}</p>
+
+<div class="verlauf">
+  {% for n in verlauf %}
+    <div class="blase b-{{ n.richtung }}">{{ n.text }}
+      <span class="zeit">{{ n.zeit[11:16] }} Uhr · {{ n.zeit[8:10] }}.{{ n.zeit[5:7] }}.</span>
+    </div>
+  {% else %}
+    <p style="color:var(--grau);text-align:center;padding:20px 0;margin:0">Noch keine Nachrichten.</p>
+  {% endfor %}
+</div>
+
+<div class="karte">
+  <h2>Selbst antworten</h2>
+  <form method="post" action="/chats/{{ lead.id }}/senden">
+    <textarea name="text" placeholder="Nachricht schreiben" required></textarea>
+    <div class="aktionen">
+      <button type="submit">Senden</button>
+      <span class="hinweis">Geht nur, wenn der Kontakt in den letzten 24 Stunden geschrieben hat.
+        Sonst eine Vorlage nutzen.</span>
+    </div>
+  </form>
+</div>
+
+<div class="karte">
+  <h2>Vorlage schicken</h2>
+  <form method="post" action="/chats/{{ lead.id }}/vorlage">
+    <div class="feld">
+      <label for="vorlage">Vorgefertigte Nachricht</label>
+      <select id="vorlage" name="vorlage" required>
+        {% for schluessel, label in followups.items() %}
+        <option value="{{ schluessel }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="aktionen">
+      <button type="submit" class="leise">Vorlage senden</button>
+      <span class="hinweis">Vorlagen kommen auch an, wenn der Kontakt lange nicht geschrieben hat.</span>
+    </div>
+  </form>
+</div>
+{% endblock %}
