@@ -1,0 +1,32 @@
+{% set seite = 'chats' %}
+{% extends "base.html" %}
+{% block inhalt %}
+<h1>Gespräche</h1>
+<p class="unterzeile">Alle Kontakte, die angeschrieben wurden. Neueste Bewegung oben.</p>
+
+{% if zeilen %}
+<table>
+  <thead><tr><th>Name</th><th>Letzte Nachricht</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for z in zeilen %}
+  <tr>
+    <td><a href="/chats/{{ z.id }}">{{ z.vorname }} {{ z.nachname }}</a>
+      <span class="zeit">+{{ z.telefon }}{% if z.unternehmen %} · {{ z.unternehmen }}{% endif %}</span></td>
+    <td style="color:var(--grau)">{{ (z.letzte or '')[:70] }}{% if z.letzte and z.letzte|length > 70 %}…{% endif %}</td>
+    <td>
+      {% if z.antworten %}
+        <span class="marke-status s-geantwortet">{{ z.antworten }} Antwort{% if z.antworten != 1 %}en{% endif %}</span>
+      {% else %}
+        <span class="marke-status s-angeschrieben">Wartet auf Antwort</span>
+      {% endif %}
+      {% if not z.auto_antwort %}<span class="zeit">Automatik aus</span>{% endif %}
+    </td>
+    <td style="text-align:right"><a href="/chats/{{ z.id }}" style="font-size:14px">Öffnen</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="leer">Noch keine Gespräche. Sobald du Kontakte anschreibst, tauchen sie hier auf.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,99 @@
+{% set seite = 'leads' %}
+{% extends "base.html" %}
+{% block inhalt %}
+<h1>Kontakte</h1>
+<p class="unterzeile">Alte Leads hochladen, Kategorie prüfen, Erstnachricht verschicken.</p>
+
+{% if meldung %}<div class="meldung">{{ meldung }}</div>{% endif %}
+
+<div class="karte">
+  <h2 style="margin-top:0">Liste hochladen</h2>
+  <form method="post" action="/leads/csv" enctype="multipart/form-data">
+    <div class="raster">
+      <div class="feld" style="grid-column:1/-1">
+        <label for="datei">CSV mit den Spalten telefon, vorname, nachname, unternehmen, kategorie</label>
+        <input id="datei" type="file" name="datei" accept=".csv,text/csv" required>
+      </div>
+    </div>
+    <div class="aktionen"><button type="submit">Hochladen</button></div>
+  </form>
+</div>
+
+<div class="karte">
+  <h2 style="margin-top:0">Einzelnen Kontakt anlegen</h2>
+  <form method="post" action="/leads/neu">
+    <div class="raster">
+      <div class="feld"><label for="t">Telefon</label>
+        <input id="t" type="text" name="telefon" placeholder="0151 23456789" required></div>
+      <div class="feld"><label for="v">Vorname</label>
+        <input id="v" type="text" name="vorname"></div>
+      <div class="feld"><label for="n">Nachname</label>
+        <input id="n" type="text" name="nachname"></div>
+      <div class="feld"><label for="u">Praxis oder Einrichtung</label>
+        <input id="u" type="text" name="unternehmen"></div>
+      <div class="feld"><label for="k">Kategorie</label>
+        <select id="k" name="kategorie">
+          {% for schluessel, t in templates.items() %}
+          <option value="{{ schluessel }}">{{ t.label }}</option>
+          {% endfor %}
+        </select></div>
+    </div>
+    <div class="aktionen"><button type="submit">Anlegen</button></div>
+  </form>
+</div>
+
+<h2>Alle Kontakte</h2>
+{% if leads %}
+<form method="post" action="/leads/alle-senden" style="margin-bottom:14px">
+  <button type="submit">Alle noch nicht angeschriebenen verschicken</button>
+</form>
+<table>
+  <thead><tr>
+    <th>Name</th><th>Telefon</th><th>Kategorie</th><th>Status</th><th></th>
+  </tr></thead>
+  <tbody>
+  {% for l in leads %}
+  <tr>
+    <td>{{ l.vorname }} {{ l.nachname }}
+      {% if l.unternehmen %}<span class="zeit">{{ l.unternehmen }}</span>{% endif %}</td>
+    <td class="nr">+{{ l.telefon }}</td>
+    <td>
+      <form method="post" action="/leads/{{ l.id }}/kategorie" class="inline">
+        <select name="kategorie" onchange="this.form.submit()"
+                {% if l.status != 'neu' %}disabled{% endif %}
+                style="width:auto;padding:4px 7px;font-size:14px">
+          {% for schluessel, t in templates.items() %}
+          <option value="{{ schluessel }}" {% if l.kategorie==schluessel %}selected{% endif %}>
+            {{ t.label }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </td>
+    <td>
+      <span class="marke-status s-{{ l.status }}">
+        {% if l.status=='neu' %}Noch nicht angeschrieben
+        {% elif l.status=='angeschrieben' %}Angeschrieben
+        {% elif l.status=='geantwortet' %}Hat geantwortet
+        {% else %}Fehlgeschlagen{% endif %}
+      </span>
+      {% if l.fehler %}<span class="fehlertext">{{ l.fehler }}</span>{% endif %}
+    </td>
+    <td style="text-align:right;white-space:nowrap">
+      {% if l.status in ['neu','fehler'] %}
+      <form method="post" action="/leads/{{ l.id }}/senden" class="inline">
+        <button type="submit" class="leise">Senden</button></form>
+      {% else %}
+      <a href="/chats/{{ l.id }}" style="font-size:14px">Gespräch</a>
+      {% endif %}
+      <form method="post" action="/leads/{{ l.id }}/loeschen" class="inline"
+            onsubmit="return confirm('Kontakt und Verlauf löschen?')">
+        <button type="submit" class="text">Löschen</button></form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="leer">Noch keine Kontakte. Lade oben eine CSV hoch oder lege einen einzeln an.</p>
+{% endif %}
+{% endblock %}
