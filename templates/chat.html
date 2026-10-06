@@ -1,0 +1,35 @@
+{% set seite = 'chats' %}
+{% extends "base.html" %}
+{% block inhalt %}
+<a href="/chats" class="zurueck">Zurück zu allen Gesprächen</a>
+<h1>{{ lead.vorname }} {{ lead.nachname }}</h1>
+<p class="unterzeile">+{{ lead.telefon }}{% if lead.unternehmen %} · {{ lead.unternehmen }}{% endif %}</p>
+
+<div class="karte" style="padding:15px 22px;display:flex;align-items:center;gap:15px;flex-wrap:wrap">
+  <span style="font-size:14.5px">Automatische Antworten:
+    <strong style="color:{{ 'var(--moos)' if lead.auto_antwort else 'var(--rost)' }}">
+      {{ 'an' if lead.auto_antwort else 'aus' }}</strong></span>
+  <form method="post" action="/chats/{{ lead.id }}/auto" class="inline">
+    <button type="submit" class="leise">{{ 'Ausschalten' if lead.auto_antwort else 'Einschalten' }}</button>
+  </form>
+  <span class="hinweis">{% if lead.auto_antwort %}Antworten werden automatisch beantwortet.{% else %}Du antwortest selbst.{% endif %}</span>
+</div>
+
+<div class="verlauf">
+  {% for n in verlauf %}
+    <div class="blase b-{{ n.richtung }}">{{ n.text }}
+      <span class="zeit">{{ n.zeit[11:16] }} Uhr · {{ n.zeit[8:10] }}.{{ n.zeit[5:7] }}.</span>
+    </div>
+  {% else %}
+    <p style="color:var(--grau);text-align:center;padding:20px 0;margin:0">Noch keine Nachrichten.</p>
+  {% endfor %}
+</div>
+
+<form method="post" action="/chats/{{ lead.id }}/senden">
+  <textarea name="text" placeholder="Selbst antworten" required></textarea>
+  <div class="aktionen">
+    <button type="submit">Senden</button>
+    <span class="hinweis">Möglich, solange der Kontakt in den letzten 24 Stunden geschrieben hat.</span>
+  </div>
+</form>
+{% endblock %}
