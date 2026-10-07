@@ -8,7 +8,18 @@
 <div class="verlauf">
   {% for n in verlauf %}
     <div class="blase b-{{ n.richtung }}">{{ n.text }}
-      <span class="zeit">{{ n.zeit[11:16] }} Uhr · {{ n.zeit[8:10] }}.{{ n.zeit[5:7] }}.</span>
+      {% if n.medien_datei %}
+        {% if n.medien_typ in ['audio','voice'] %}
+          <audio controls preload="none" src="/medien/{{ n.medien_datei }}"></audio>
+        {% elif n.medien_typ == 'image' or n.medien_typ == 'sticker' %}
+          <a href="/medien/{{ n.medien_datei }}" target="_blank">
+            <img src="/medien/{{ n.medien_datei }}" alt="Bild vom Kontakt"></a>
+        {% elif n.medien_typ == 'video' %}
+          <video controls preload="none" src="/medien/{{ n.medien_datei }}"></video>
+        {% endif %}
+        <a class="laden" href="/medien/{{ n.medien_datei }}?download=1">Herunterladen</a>
+      {% endif %}
+      <span class="zeit">{{ n.zeit|zeit }}</span>
     </div>
   {% else %}
     <p style="color:var(--grau);text-align:center;padding:20px 0;margin:0">Noch keine Nachrichten.</p>
@@ -32,16 +43,30 @@
   <form method="post" action="/chats/{{ lead.id }}/vorlage">
     <div class="feld">
       <label for="vorlage">Vorgefertigte Nachricht</label>
-      <select id="vorlage" name="vorlage" required>
-        {% for schluessel, label in followups.items() %}
-        <option value="{{ schluessel }}">{{ label }}</option>
+      <select id="vorlage" name="vorlage" onchange="zeigeVorschau()">
+        {% for schluessel, v in followups.items() %}
+        <option value="{{ schluessel }}">{{ v.label }}</option>
         {% endfor %}
       </select>
     </div>
+    <div class="vorschau" id="vorschau"></div>
     <div class="aktionen">
       <button type="submit" class="leise">Vorlage senden</button>
       <span class="hinweis">Vorlagen kommen auch an, wenn der Kontakt lange nicht geschrieben hat.</span>
     </div>
   </form>
 </div>
+
+<script>
+const texte = {
+{% for schluessel, v in followups.items() %}
+  {{ schluessel|tojson }}: {{ v.text|tojson }}{% if not loop.last %},{% endif %}
+{% endfor %}
+};
+function zeigeVorschau(){
+  const wahl = document.getElementById('vorlage').value;
+  document.getElementById('vorschau').textContent = texte[wahl] || '';
+}
+zeigeVorschau();
+</script>
 {% endblock %}

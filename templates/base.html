@@ -116,6 +116,20 @@ select.klein{width:auto;padding:5px 9px;font-size:13px}
   font-variant-numeric:tabular-nums}
 .zurueck{display:inline-block;font-size:13px;color:var(--grau);text-decoration:none;
   margin-bottom:16px}
+.reiter{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.reiter a{padding:7px 14px;border:1px solid var(--linie);border-radius:20px;
+  text-decoration:none;color:var(--grau);font-size:13.5px;background:var(--karte);
+  transition:background .12s}
+.reiter a:hover{background:var(--sand)}
+.reiter a.aktiv{background:var(--moos-hell);border-color:var(--moos-rand);color:var(--moos);
+  font-weight:500}
+.reiter a b{font-weight:600;font-variant-numeric:tabular-nums;margin-left:4px}
+.vorschau{margin-top:12px;padding:13px 15px;background:var(--sand);border-radius:7px;
+  font-size:14px;line-height:1.55;white-space:pre-wrap;color:var(--tinte)}
+.blase audio{display:block;width:100%;max-width:320px;margin-top:9px;height:40px}
+.blase video{display:block;max-width:100%;margin-top:9px;border-radius:7px}
+.blase img{display:block;max-width:240px;margin-top:9px;border-radius:7px}
+.laden{display:inline-block;font-size:12.5px;margin-top:7px;color:var(--grau)}
 .zurueck:hover{color:var(--tinte)}
 
 @media(max-width:700px){

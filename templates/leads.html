@@ -5,6 +5,12 @@
 <p class="unterzeile">Liste hochladen, Kategorie prüfen, Erstnachricht verschicken.</p>
 
 {% if meldung %}<div class="meldung">{{ meldung }}</div>{% endif %}
+{% if versand.aktiv %}
+<div class="meldung" style="background:var(--blau-hell);border-color:#C9D4E6;color:var(--blau)">
+  Versand läuft: {{ versand.fertig }} von {{ versand.offen }} verschickt.
+  Seite neu laden für den aktuellen Stand.
+</div>
+{% endif %}
 
 {% if zahlen.gesamt %}
 <div class="zahlen">
@@ -63,9 +69,20 @@
 {% if leads %}
 {% if zahlen.offen %}
 <form method="post" action="/leads/alle-senden" style="margin-bottom:16px"
-      onsubmit="return confirm('{{ zahlen.offen }} Kontakte jetzt anschreiben?')">
-  <button type="submit">{{ zahlen.offen }} noch nicht angeschriebene jetzt verschicken</button>
+      onsubmit="return starteVersand(this)">
+  <button type="submit" id="bulk" {% if versand.aktiv %}disabled{% endif %}>
+    {% if versand.aktiv %}Versand läuft{% else %}{{ zahlen.offen }} noch nicht angeschriebene jetzt verschicken{% endif %}
+  </button>
 </form>
+<script>
+function starteVersand(f){
+  if(!confirm('{{ zahlen.offen }} Kontakte jetzt anschreiben?')) return false;
+  const b = document.getElementById('bulk');
+  b.disabled = true;
+  b.textContent = 'Versand wird gestartet';
+  return true;
+}
+</script>
 {% endif %}
 <div class="tabelle">
 <table>

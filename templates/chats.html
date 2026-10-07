@@ -4,6 +4,19 @@
 <h1>Gespräche</h1>
 <p class="unterzeile">Alle angeschriebenen Kontakte, neueste Bewegung oben.</p>
 
+<div class="reiter">
+  <a href="/chats?filter=alle" class="{% if filter=='alle' %}aktiv{% endif %}">
+    Alle <b>{{ zahlen.alle }}</b></a>
+  <a href="/chats?filter=geantwortet" class="{% if filter=='geantwortet' %}aktiv{% endif %}">
+    Haben geantwortet <b>{{ zahlen.geantwortet }}</b></a>
+  <a href="/chats?filter=offen" class="{% if filter=='offen' %}aktiv{% endif %}">
+    Warten auf Antwort <b>{{ zahlen.offen }}</b></a>
+  {% if zahlen.fehler %}
+  <a href="/chats?filter=fehler" class="{% if filter=='fehler' %}aktiv{% endif %}">
+    Nicht zugestellt <b>{{ zahlen.fehler }}</b></a>
+  {% endif %}
+</div>
+
 {% if zeilen %}
 <div class="tabelle">
 <table>
@@ -13,10 +26,13 @@
   <tr>
     <td><a href="/chats/{{ z.id }}" style="font-weight:500;text-decoration:none">{{ z.vorname }} {{ z.nachname }}</a>
       <span class="sub">+{{ z.telefon }}{% if z.unternehmen %} · {{ z.unternehmen }}{% endif %}</span></td>
-    <td style="color:var(--grau);max-width:320px">{{ (z.letzte or '')[:66] }}{% if z.letzte and z.letzte|length > 66 %}…{% endif %}</td>
+    <td style="color:var(--grau);max-width:320px">{{ (z.letzte or '')[:66] }}{% if z.letzte and z.letzte|length > 66 %}…{% endif %}
+      <span class="sub">{{ z.letzte_zeit|zeit }}</span></td>
     <td>
       {% if z.antworten %}
         <span class="pille s-geantwortet">{{ z.antworten }} Antwort{% if z.antworten != 1 %}en{% endif %}</span>
+      {% elif z.status == 'fehler' %}
+        <span class="pille s-fehler">Nicht zugestellt</span>
       {% else %}
         <span class="pille s-angeschrieben">Wartet</span>
       {% endif %}
@@ -28,6 +44,11 @@
 </table>
 </div>
 {% else %}
-<p class="leer">Noch keine Gespräche. Sobald Kontakte angeschrieben sind, tauchen sie hier auf.</p>
+<p class="leer">
+  {% if filter=='geantwortet' %}Noch hat niemand geantwortet.
+  {% elif filter=='offen' %}Hier ist gerade niemand offen.
+  {% elif filter=='fehler' %}Keine fehlgeschlagenen Zustellungen.
+  {% else %}Noch keine Gespräche. Sobald Kontakte angeschrieben sind, tauchen sie hier auf.{% endif %}
+</p>
 {% endif %}
 {% endblock %}
