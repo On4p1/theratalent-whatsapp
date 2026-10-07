@@ -17,13 +17,25 @@
   <div class="zahl"><b>{{ zahlen.gesamt }}</b><span>Kontakte insgesamt</span></div>
   <div class="zahl"><b>{{ zahlen.offen }}</b><span>Noch nicht angeschrieben</span></div>
   <div class="zahl"><b>{{ zahlen.raus }}</b><span>Angeschrieben</span></div>
-  <div class="zahl"><b>{{ zahlen.zugestellt }}</b><span>Zugestellt</span></div>
-  <div class="zahl heben"><b>{{ zahlen.geantwortet }}</b><span>Haben geantwortet</span></div>
-  <div class="zahl heben"><b>{{ zahlen.quote }} %</b><span>Antwortquote</span></div>
+  <div class="zahl"><b>{{ zahlen.zugestellt }}</b>
+    <span>Zugestellt{% if zahlen.raus %} · {{ zahlen.quote_zugestellt }} %{% endif %}</span></div>
+  <div class="zahl"><b>{{ zahlen.gelesen }}</b><span>Gelesen</span></div>
+  <div class="zahl heben"><b>{{ zahlen.geantwortet }}</b>
+    <span>Haben geantwortet{% if zahlen.raus %} · {{ zahlen.quote }} %{% endif %}</span></div>
+  <div class="zahl heben"><b>{{ zahlen.termine }}</b>
+    <span>Termine{% if zahlen.raus %} · {{ zahlen.quote_termin }} %{% endif %}</span></div>
   {% if zahlen.fehler %}
   <div class="zahl"><b>{{ zahlen.fehler }}</b><span>Nicht zugestellt</span></div>
   {% endif %}
 </div>
+{% endif %}
+
+{% if zahlen.geantwortet %}
+<p class="unterzeile" style="margin-top:-14px">
+  Von {{ zahlen.raus }} Angeschriebenen haben {{ zahlen.geantwortet }} geantwortet
+  ({{ zahlen.quote }} %), daraus wurden {{ zahlen.termine }} Termine
+  ({{ zahlen.quote_termin_antwort }} % der Antworten).
+</p>
 {% endif %}
 
 <div class="karte">

@@ -11,6 +11,10 @@
     Haben geantwortet <b>{{ zahlen.geantwortet }}</b></a>
   <a href="/chats?filter=offen" class="{% if filter=='offen' %}aktiv{% endif %}">
     Warten auf Antwort <b>{{ zahlen.offen }}</b></a>
+  <a href="/chats?filter=gelesen" class="{% if filter=='gelesen' %}aktiv{% endif %}">
+    Gelesen, nicht geantwortet <b>{{ zahlen.gelesen }}</b></a>
+  <a href="/chats?filter=termin" class="{% if filter=='termin' %}aktiv{% endif %}">
+    Termin <b>{{ zahlen.termin }}</b></a>
   {% if zahlen.fehler %}
   <a href="/chats?filter=fehler" class="{% if filter=='fehler' %}aktiv{% endif %}">
     Nicht zugestellt <b>{{ zahlen.fehler }}</b></a>
@@ -33,9 +37,12 @@
         <span class="pille s-geantwortet">{{ z.antworten }} Antwort{% if z.antworten != 1 %}en{% endif %}</span>
       {% elif z.status == 'fehler' %}
         <span class="pille s-fehler">Nicht zugestellt</span>
+      {% elif z.zustellung == 'gelesen' %}
+        <span class="pille s-angeschrieben">Gelesen, keine Antwort</span>
       {% else %}
-        <span class="pille s-angeschrieben">Wartet</span>
+        <span class="pille s-angeschrieben">{{ (z.zustellung or 'wartet')|capitalize }}</span>
       {% endif %}
+      {% if z.termin %}<span class="pille s-termin">Termin</span>{% endif %}
     </td>
     <td style="text-align:right"><a href="/chats/{{ z.id }}" style="font-size:13.5px;font-weight:500">Öffnen</a></td>
   </tr>
@@ -47,6 +54,8 @@
 <p class="leer">
   {% if filter=='geantwortet' %}Noch hat niemand geantwortet.
   {% elif filter=='offen' %}Hier ist gerade niemand offen.
+  {% elif filter=='gelesen' %}Niemand hat gelesen ohne zu antworten.
+  {% elif filter=='termin' %}Noch keine Termine markiert.
   {% elif filter=='fehler' %}Keine fehlgeschlagenen Zustellungen.
   {% else %}Noch keine Gespräche. Sobald Kontakte angeschrieben sind, tauchen sie hier auf.{% endif %}
 </p>

@@ -5,6 +5,17 @@
 <h1>{{ lead.vorname }} {{ lead.nachname }}</h1>
 <p class="unterzeile">+{{ lead.telefon }}{% if lead.unternehmen %} · {{ lead.unternehmen }}{% endif %}</p>
 
+<div class="karte" style="padding:15px 22px;display:flex;align-items:center;gap:15px;flex-wrap:wrap">
+  <span style="font-size:14.5px">Termin zustande gekommen:
+    <strong style="color:{{ 'var(--moos)' if lead.termin else 'var(--grau)' }}">
+      {{ 'ja' if lead.termin else 'noch nicht' }}</strong></span>
+  <form method="post" action="/chats/{{ lead.id }}/termin" class="inline">
+    <button type="submit" class="leise">
+      {{ 'Doch kein Termin' if lead.termin else 'Termin markieren' }}</button>
+  </form>
+  <span class="hinweis">Zählt in der Übersicht mit.</span>
+</div>
+
 <div class="verlauf">
   {% for n in verlauf %}
     <div class="blase b-{{ n.richtung }}">{{ n.text }}
@@ -19,7 +30,8 @@
         {% endif %}
         <a class="laden" href="/medien/{{ n.medien_datei }}?download=1">Herunterladen</a>
       {% endif %}
-      <span class="zeit">{{ n.zeit|zeit }}</span>
+      <span class="zeit">{{ n.zeit|zeit }}{% if n.richtung=='raus' and n.zustellung %}
+        · {{ n.zustellung }}{% endif %}</span>
     </div>
   {% else %}
     <p style="color:var(--grau);text-align:center;padding:20px 0;margin:0">Noch keine Nachrichten.</p>
